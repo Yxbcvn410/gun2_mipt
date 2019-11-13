@@ -26,7 +26,8 @@ class Agent(ABC):
 
     @abstractmethod
     def start(self):
-        self.job = self.canvas.after(DT, self.update)
+        if (self.job is None) or (self.job == 'pause'):
+            self.job = self.canvas.after(DT, self.update)
 
     @abstractmethod
     def play(self):
@@ -240,6 +241,12 @@ class Gun(Agent):
     def update(self):
         if self.f2_on and (self.f2_power < self.max_gun_power):
             self.f2_power += self.gun_power_gain
+        if WINDOW_SHAPE[1] / 2 <= self.gun_coords[1] <= WINDOW_SHAPE[1] - MARGIN:
+            self.gun_coords[1] += self.vy
+        elif self.gun_coords[1] > WINDOW_SHAPE[1] - MARGIN:
+            self.gun_coords[1] = WINDOW_SHAPE[1] - MARGIN
+        elif self.gun_coords[1] < WINDOW_SHAPE[1] / 2:
+            self.gun_coords[1] = WINDOW_SHAPE[1] / 2
         self.update_angle()
         self.redraw()
         self.job = self.canvas.after(DT, self.update)
@@ -484,7 +491,6 @@ class BattleField(tk.Canvas):
         self.remove_bullets()
         self.remove_targets()
         self.create_targets()
-        self.gun.stop()
         self.bullet_counter = 0
         self.last_hit_bullet_number = None
         self.itemconfig(self.victory_text_id, text='')

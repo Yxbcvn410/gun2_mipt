@@ -120,7 +120,7 @@ class Ball(Agent):
         if (self.vx ** 2 + self.vy ** 2 < self.stop_v ** 2) and (WINDOW_SHAPE[1] - MARGIN - self.y < 5):
             self.destroy()
             return
-        targets_hit = self.hit_targets()
+        self.hit_targets()
         if self.x < MARGIN:
             self.vx *= -self.jumpiness
             self.vy *= self.jumpiness
